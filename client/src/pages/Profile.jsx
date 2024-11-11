@@ -34,7 +34,7 @@ const Profile = () => {
     )
 }
 
-export const action = async ({ request }) => {
+export const action =  (queryClient) => async ({ request }) => {
     const formData = await request.formData();
 
     const file = formData.get('avatar');
@@ -45,11 +45,13 @@ export const action = async ({ request }) => {
   
     try {
       await customFetch.patch('/users/update-user', formData);
+      queryClient.invalidateQueries(['user']);
       toast.success('Profile updated successfully');
+      return redirect('/dashboard');
     } catch (error) {
       toast.error(error?.response?.data?.message);
+      return null;
     }
-    return null;
 };
 
 export default Profile
